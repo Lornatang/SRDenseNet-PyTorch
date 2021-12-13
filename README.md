@@ -112,10 +112,10 @@ Source of original paper results: https://openaccess.thecvf.com/content_ICCV_201
 
 In the following table, the value in `()` indicates the result of the project, and `-` indicates no test.
 
-| Dataset | Scale |     PSNR     | 
-|:-------:|:-----:|:------------:|
-|  Set5   |   4   | 32.02(****)  |
-|  Set14  |   4   | 28.50(**-**) |
+| Dataset | Scale |       PSNR       | 
+|:-------:|:-----:|:----------------:|
+|  Set5   |   4   | 32.02(**31.55**) |
+|  Set14  |   4   | 28.50(**28.03**) |
 
 Low Resolution / Super Resolution / High Resolution
 <span align="center"><img src="assets/result.png"/></span>
