@@ -28,7 +28,6 @@ class DenseConvBlock(nn.Module):
         self.conv8 = nn.Conv2d(int(growth_channels * 7), out_channels, (3, 3), (1, 1), (1, 1))
 
         self.relu = nn.ReLU(True)
-        self.identity = nn.Identity()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         out1 = self.relu(self.conv1(x))
