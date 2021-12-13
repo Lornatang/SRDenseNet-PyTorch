@@ -35,9 +35,9 @@ class DenseConvBlock(nn.Module):
         out3 = self.relu(self.conv3(torch.cat([x, out1, out2], 1)))
         out4 = self.relu(self.conv4(torch.cat([x, out1, out2, out3], 1)))
         out5 = self.relu(self.conv5(torch.cat([x, out1, out2, out3, out4], 1)))
-        out6 = self.relu(self.conv5(torch.cat([x, out1, out2, out3, out4, out5], 1)))
-        out7 = self.relu(self.conv5(torch.cat([x, out1, out2, out3, out4, out5, out6], 1)))
-        out8 = self.relu(self.conv5(torch.cat([x, out1, out2, out3, out4, out5, out6, out7], 1)))
+        out6 = self.relu(self.conv6(torch.cat([x, out1, out2, out3, out4, out5], 1)))
+        out7 = self.relu(self.conv7(torch.cat([x, out1, out2, out3, out4, out5, out6], 1)))
+        out8 = self.relu(self.conv8(torch.cat([x, out1, out2, out3, out4, out5, out6, out7], 1)))
 
         return out8
 
