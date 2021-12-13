@@ -31,15 +31,29 @@ class DenseConvBlock(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         out1 = self.relu(self.conv1(x))
-        out2 = self.relu(self.conv2(torch.cat([x, out1], 1)))
-        out3 = self.relu(self.conv3(torch.cat([x, out1, out2], 1)))
-        out4 = self.relu(self.conv4(torch.cat([x, out1, out2, out3], 1)))
-        out5 = self.relu(self.conv5(torch.cat([x, out1, out2, out3, out4], 1)))
-        out6 = self.relu(self.conv6(torch.cat([x, out1, out2, out3, out4, out5], 1)))
-        out7 = self.relu(self.conv7(torch.cat([x, out1, out2, out3, out4, out5, out6], 1)))
-        out8 = self.relu(self.conv8(torch.cat([x, out1, out2, out3, out4, out5, out6, out7], 1)))
 
-        return out8
+        out2 = self.relu(self.conv2(out1))
+        out2_concat = torch.cat([out1, out2], 1)
+
+        out3 = self.relu(self.conv3(out2_concat))
+        out3_concat = torch.cat([out1, out2, out3], 1)
+
+        out4 = self.relu(self.conv4(out3_concat))
+        out4_concat = torch.cat([out1, out2, out3, out4], 1)
+
+        out5 = self.relu(self.conv5(out4_concat))
+        out5_concat = torch.cat([out1, out2, out3, out4, out5], 1)
+
+        out6 = self.relu(self.conv6(out5_concat))
+        out6_concat = torch.cat([out1, out2, out3, out4, out5, out6], 1)
+
+        out7 = self.relu(self.conv7(out6_concat))
+        out7_concat = torch.cat([out1, out2, out3, out4, out5, out6, out7], 1)
+
+        out8 = self.relu(self.conv8(out7_concat))
+        out8_concat = torch.cat([out1, out2, out3, out4, out5, out6, out7, out8], 1)
+
+        return out8_concat
 
 
 class SRDenseNet(nn.Module):
