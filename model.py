@@ -31,14 +31,14 @@ class DenseConvBlock(nn.Module):
         self.identity = nn.Identity()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        out1 = self.lrelu(self.conv1(x))
-        out2 = self.lrelu(self.conv2(torch.cat([x, out1], 1)))
-        out3 = self.lrelu(self.conv3(torch.cat([x, out1, out2], 1)))
-        out4 = self.lrelu(self.conv4(torch.cat([x, out1, out2, out3], 1)))
-        out5 = self.lrelu(self.conv5(torch.cat([x, out1, out2, out3, out4], 1)))
-        out6 = self.lrelu(self.conv5(torch.cat([x, out1, out2, out3, out4, out5], 1)))
-        out7 = self.lrelu(self.conv5(torch.cat([x, out1, out2, out3, out4, out5, out6], 1)))
-        out8 = self.lrelu(self.conv5(torch.cat([x, out1, out2, out3, out4, out5, out6, out7], 1)))
+        out1 = self.relu(self.conv1(x))
+        out2 = self.relu(self.conv2(torch.cat([x, out1], 1)))
+        out3 = self.relu(self.conv3(torch.cat([x, out1, out2], 1)))
+        out4 = self.relu(self.conv4(torch.cat([x, out1, out2, out3], 1)))
+        out5 = self.relu(self.conv5(torch.cat([x, out1, out2, out3, out4], 1)))
+        out6 = self.relu(self.conv5(torch.cat([x, out1, out2, out3, out4, out5], 1)))
+        out7 = self.relu(self.conv5(torch.cat([x, out1, out2, out3, out4, out5, out6], 1)))
+        out8 = self.relu(self.conv5(torch.cat([x, out1, out2, out3, out4, out5, out6, out7], 1)))
 
         return out8
 
