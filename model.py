@@ -26,33 +26,21 @@ class DenseConvBlock(nn.Module):
         self.conv6 = nn.Conv2d(int(growth_channels * 5), out_channels, (3, 3), (1, 1), (1, 1))
         self.conv7 = nn.Conv2d(int(growth_channels * 6), out_channels, (3, 3), (1, 1), (1, 1))
         self.conv8 = nn.Conv2d(int(growth_channels * 7), out_channels, (3, 3), (1, 1), (1, 1))
+
         self.relu = nn.ReLU(True)
+        self.identity = nn.Identity()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        out1 = self.relu(self.conv1(x))
+        out1 = self.lrelu(self.conv1(x))
+        out2 = self.lrelu(self.conv2(torch.cat([x, out1], 1)))
+        out3 = self.lrelu(self.conv3(torch.cat([x, out1, out2], 1)))
+        out4 = self.lrelu(self.conv4(torch.cat([x, out1, out2, out3], 1)))
+        out5 = self.lrelu(self.conv5(torch.cat([x, out1, out2, out3, out4], 1)))
+        out6 = self.lrelu(self.conv5(torch.cat([x, out1, out2, out3, out4, out5], 1)))
+        out7 = self.lrelu(self.conv5(torch.cat([x, out1, out2, out3, out4, out5, out6], 1)))
+        out8 = self.lrelu(self.conv5(torch.cat([x, out1, out2, out3, out4, out5, out6, out7], 1)))
 
-        out2 = self.relu(self.conv2(out1))
-        concat = self.relu(torch.cat([out1, out2], 1))
-
-        out3 = self.relu(self.conv3(concat))
-        concat = self.relu(torch.cat([out1, out2, out3], 1))
-
-        out4 = self.relu(self.conv4(concat))
-        concat = self.relu(torch.cat([out1, out2, out3, out4], 1))
-
-        out5 = self.relu(self.conv5(concat))
-        concat = self.relu(torch.cat([out1, out2, out3, out4, out5], 1))
-
-        out6 = self.relu(self.conv6(concat))
-        concat = self.relu(torch.cat([out1, out2, out3, out4, out5, out6], 1))
-
-        out7 = self.relu(self.conv7(concat))
-        concat = self.relu(torch.cat([out1, out2, out3, out4, out5, out6, out7], 1))
-
-        out8 = self.relu(self.conv8(concat))
-        concat = self.relu(torch.cat([out1, out2, out3, out4, out5, out6, out7, out8], 1))
-
-        return concat
+        return out8
 
 
 class SRDenseNet(nn.Module):
@@ -119,6 +107,6 @@ class SRDenseNet(nn.Module):
     def _initialize_weights(self) -> None:
         for module in self.modules():
             if isinstance(module, nn.Conv2d) or isinstance(module, nn.ConvTranspose2d):
-                nn.init.kaiming_normal_(module.weight, mode="fan_in", nonlinearity="relu")
+                nn.init.kaiming_normal_(module.weight, mode="fan_out", nonlinearity="relu")
                 if module.bias is not None:
                     nn.init.constant_(module.bias, 0)
