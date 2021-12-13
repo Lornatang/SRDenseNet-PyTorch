@@ -59,19 +59,19 @@
 
 ```text
 - train_lmdb
-    - ImageNet
-        - SRDenseNet_LRbicx4_lmdb
+    - SRDenseNet
+        - ImageNet_LRbicx4_lmdb
             - data.mdb
             - lock.mdb
-        - SRDenseNet_HR_lmdb
+        - ImageNet_HR_lmdb
             - data.mdb
             - lock.mdb
 - valid_lmdb
-    - ImageNet
-        - SRDenseNet_LRbicx4_lmdb
+    - SRDenseNet
+        - ImageNet_LRbicx4_lmdb
             - data.mdb
             - lock.mdb
-        - SRDenseNet_HR_lmdb
+        - ImageNet_HR_lmdb
             - data.mdb
             - lock.mdb
 ```
