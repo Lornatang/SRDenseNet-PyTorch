@@ -13,32 +13,25 @@
 # ==============================================================================
 """Realize the parameter configuration function of dataset, model, training and verification code."""
 import torch
-from torch.backends import cudnn as cudnn
+from torch.backends import cudnn
 
-# ==============================================================================
-# General configuration
-# ==============================================================================
+# Random seed to maintain reproducible results
 torch.manual_seed(0)
+# Use GPU for training by default
 device = torch.device("cuda", 0)
+# Turning on when the image size does not change during training can speed up training
 cudnn.benchmark = True
+# Image magnification factor
 upscale_factor = 4
+# Current configuration parameter method
 mode = "train"
-exp_name = "baseline"
+# Experiment name, easy to save weights and log files
+exp_name = "SRDenseNet"
 
-# ==============================================================================
-# Training configuration
-# ==============================================================================
 if mode == "train":
     # Dataset
-    # Image format
     train_image_dir = "data/ImageNet/SRDenseNet/train"
     valid_image_dir = "data/ImageNet/SRDenseNet/valid"
-
-    # LMDB format
-    train_lr_lmdb_path = f"data/train_lmdb/SRDenseNet/ImageNet_LRbicx{upscale_factor}_lmdb"
-    train_hr_lmdb_path = f"data/train_lmdb/SRDenseNet/ImageNet_HR_lmdb"
-    valid_lr_lmdb_path = f"data/valid_lmdb/SRDenseNet/ImageNet_LRbicx{upscale_factor}_lmdb"
-    valid_hr_lmdb_path = f"data/valid_lmdb/SRDenseNet/ImageNet_HR_lmdb"
 
     image_size = 100
     batch_size = 32
@@ -51,24 +44,18 @@ if mode == "train":
     resume_weight = ""
 
     # Total num epochs
-    epochs = 120
+    epochs = 90
 
-    # Adam optimizer parameter (faster training and better PSNR)
-    model_optimizer_name = "adam"
+    # Adam optimizer parameter
     model_lr = 1e-4
     model_betas = (0.9, 0.999)
-    model_clip_gradient = 1.0
 
     # MultiStepLR scheduler parameter
-    lr_scheduler_name = "MultiStepLR"
-    lr_scheduler_milestones = [30, 60, 120]
+    lr_scheduler_milestones = [30]
     lr_scheduler_gamma = 0.1
 
     print_frequency = 100
 
-# ==============================================================================
-# Verify configuration
-# ==============================================================================
 if mode == "valid":
     # Test data address
     lr_dir = f"data/Set5/LRbicx{upscale_factor}"
