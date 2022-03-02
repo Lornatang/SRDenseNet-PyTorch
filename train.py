@@ -276,7 +276,7 @@ def validate(model, valid_prefetcher, psnr_criterion, epoch, writer, mode) -> fl
             # After a batch of data is calculated, add 1 to the number of batches
             batch_index += 1
 
-        # Print average PSNR metrics
+    # Print average PSNR metrics
     progress.display_summary()
 
     if mode == "Valid":
