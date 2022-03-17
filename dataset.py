@@ -101,16 +101,16 @@ class TestImageDataset(Dataset):
         lr_image = cv2.imread(self.lr_image_file_names[batch_index], cv2.IMREAD_UNCHANGED).astype(np.float32) / 255.
         hr_image = cv2.imread(self.hr_image_file_names[batch_index], cv2.IMREAD_UNCHANGED).astype(np.float32) / 255.
 
-        # Only extract the image data of the Y channel
-        lr_y_image = imgproc.bgr2ycbcr(lr_image, use_y_channel=True)
-        hr_y_image = imgproc.bgr2ycbcr(hr_image, use_y_channel=True)
+        # BGR convert to RGB
+        lr_image = cv2.cvtColor(lr_image, cv2.COLOR_BGR2RGB)
+        hr_image = cv2.cvtColor(hr_image, cv2.COLOR_BGR2RGB)
 
         # Convert image data into Tensor stream format (PyTorch).
         # Note: The range of input and output is between [0, 1]
-        lr_y_tensor = imgproc.image2tensor(lr_y_image, range_norm=False, half=False)
-        hr_y_tensor = imgproc.image2tensor(hr_y_image, range_norm=False, half=False)
+        lr_tensor = imgproc.image2tensor(lr_image, range_norm=False, half=False)
+        hr_tensor = imgproc.image2tensor(hr_image, range_norm=False, half=False)
 
-        return {"lr": lr_y_tensor, "hr": hr_y_tensor}
+        return {"lr": lr_tensor, "hr": hr_tensor}
 
     def __len__(self) -> int:
         return len(self.image_file_names)
