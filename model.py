@@ -11,13 +11,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
+import math
+from typing import Any
+
 import torch
+from torch import Tensor
 from torch import nn
 
+__all__ = [
+    "SRDenseNet",
+    "srdensenet_x2", "srdensenet_x3", "srdensenet_x4", "srdensenet_x8",
+]
 
-class DenseConvBlock(nn.Module):
-    def __init__(self, in_channels: int, out_channels: int = 16, growth_channels: int = 16):
-        super(DenseConvBlock, self).__init__()
+
+class _DenseConvBlock(nn.Module):
+    def __init__(self, in_channels: int, out_channels: int, growth_channels: int):
+        super(_DenseConvBlock, self).__init__()
         self.conv1 = nn.Conv2d(in_channels, out_channels, (3, 3), (1, 1), (1, 1))
         self.conv2 = nn.Conv2d(int(growth_channels * 1), out_channels, (3, 3), (1, 1), (1, 1))
         self.conv3 = nn.Conv2d(int(growth_channels * 2), out_channels, (3, 3), (1, 1), (1, 1))
@@ -56,32 +65,54 @@ class DenseConvBlock(nn.Module):
         return out8_concat
 
 
+class _UpsampleBlock(nn.Module):
+    def __init__(self, channels: int, upscale_factor: int) -> None:
+        super(_UpsampleBlock, self).__init__()
+        self.upsample_block = nn.Sequential(
+            nn.ConvTranspose2d(channels, 256, (upscale_factor, upscale_factor), (upscale_factor, upscale_factor), (0, 0)), nn.ReLU(True),
+        )
+
+    def forward(self, x: Tensor) -> Tensor:
+        out = self.upsample_block(x)
+
+        return out
+
+
 class SRDenseNet(nn.Module):
-    def __init__(self):
+    def __init__(
+            self,
+            in_channels: int,
+            out_channels: int,
+            upscale_factor: int
+    ) -> None:
         super(SRDenseNet, self).__init__()
         self.conv1 = nn.Sequential(
-            nn.Conv2d(1, 128, (3, 3), (1, 1), (1, 1)),
+            nn.Conv2d(in_channels, 128, (3, 3), (1, 1), (1, 1)),
             nn.ReLU(True),
         )
 
         # Feature extraction layer
-        self.dcb1 = nn.Sequential(DenseConvBlock(128))
-        self.dcb2 = nn.Sequential(DenseConvBlock(256))
-        self.dcb3 = nn.Sequential(DenseConvBlock(384))
-        self.dcb4 = nn.Sequential(DenseConvBlock(512))
-        self.dcb5 = nn.Sequential(DenseConvBlock(640))
-        self.dcb6 = nn.Sequential(DenseConvBlock(768))
-        self.dcb7 = nn.Sequential(DenseConvBlock(896))
-        self.dcb8 = nn.Sequential(DenseConvBlock(1024))
+        self.dcb1 = nn.Sequential(_DenseConvBlock(128, 16, 16))
+        self.dcb2 = nn.Sequential(_DenseConvBlock(256, 16, 16))
+        self.dcb3 = nn.Sequential(_DenseConvBlock(384, 16, 16))
+        self.dcb4 = nn.Sequential(_DenseConvBlock(512, 16, 16))
+        self.dcb5 = nn.Sequential(_DenseConvBlock(640, 16, 16))
+        self.dcb6 = nn.Sequential(_DenseConvBlock(768, 16, 16))
+        self.dcb7 = nn.Sequential(_DenseConvBlock(896, 16, 16))
+        self.dcb8 = nn.Sequential(_DenseConvBlock(1024, 16, 16))
 
         self.conv2 = nn.Conv2d(1152, 256, (1, 1), (1, 1), (0, 0))
-        self.upsampling = nn.Sequential(
-            nn.ConvTranspose2d(256, 256, (2, 2), (2, 2), (0, 0)),
-            nn.ReLU(True),
-            nn.ConvTranspose2d(256, 256, (2, 2), (2, 2), (0, 0)),
-            nn.ReLU(True),
-        )
-        self.conv3 = nn.Conv2d(256, 1, (3, 3), (1, 1), (1, 1))
+
+        # Upscale block
+        upsampling = []
+        if upscale_factor == 2 or upscale_factor == 4 or upscale_factor == 8:
+            for _ in range(int(math.log(upscale_factor, 2))):
+                upsampling.append(_UpsampleBlock(256, 2))
+        elif upscale_factor == 3:
+            upsampling.append(_UpsampleBlock(256, 3))
+        self.upsampling = nn.Sequential(*upsampling)
+
+        self.conv3 = nn.Conv2d(256, out_channels, (3, 3), (1, 1), (1, 1))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         out = self.conv1(x)
@@ -123,3 +154,27 @@ class SRDenseNet(nn.Module):
                 nn.init.kaiming_normal_(module.weight, mode="fan_out", nonlinearity="relu")
                 if module.bias is not None:
                     nn.init.constant_(module.bias, 0)
+
+
+def srdensenet_x2(**kwargs: Any) -> SRDenseNet:
+    model = SRDenseNet(upscale_factor=2, **kwargs)
+
+    return model
+
+
+def srdensenet_x3(**kwargs: Any) -> SRDenseNet:
+    model = SRDenseNet(upscale_factor=3, **kwargs)
+
+    return model
+
+
+def srdensenet_x4(**kwargs: Any) -> SRDenseNet:
+    model = SRDenseNet(upscale_factor=4, **kwargs)
+
+    return model
+
+
+def srdensenet_x8(**kwargs: Any) -> SRDenseNet:
+    model = SRDenseNet(upscale_factor=8, **kwargs)
+
+    return model

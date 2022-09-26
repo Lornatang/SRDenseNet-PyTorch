@@ -25,45 +25,58 @@ np.random.seed(0)
 device = torch.device("cuda", 0)
 # Turning on when the image size does not change during training can speed up training
 cudnn.benchmark = True
-# Image magnification factor
+# Model architecture name
+arch_name = "srdensenet_x4"
+# Model arch config
+in_channels = 1
+out_channels = 1
 upscale_factor = 4
 # Current configuration parameter method
 mode = "train"
 # Experiment name, easy to save weights and log files
-exp_name = "SRDenseNet_baseline"
+exp_name = "SRDenseNet_x4"
 
 if mode == "train":
-    # Dataset
-    train_image_dir = "data/ImageNet/SRDenseNet/train"
-    valid_image_dir = "data/ImageNet/SRDenseNet/valid"
-    test_lr_image_dir = f"data/Set5/LRbicx{upscale_factor}"
-    test_hr_image_dir = f"data/Set5/GTmod12"
+    # Dataset address
+    train_gt_images_dir = f"./data/ImageNet/SRDenseNet/train"
 
-    image_size = 100
+    test_gt_images_dir = f"./data/Set5/GTmod12"
+    test_lr_images_dir = f"./data/Set5/LRbicx{upscale_factor}"
+
+    gt_image_size = 100
     batch_size = 32
     num_workers = 4
 
+    # The address to load the pretrained model
+    pretrained_model_weights_path = ""
+
     # Incremental training and migration training
-    start_epoch = 0
-    resume = ""
+    resume_model_weights_path = f""
 
     # Total num epochs
     epochs = 90
 
-    # Adam optimizer parameter
+    # loss function weights
+    loss_weights = 1.0
+
+    # Optimizer parameter
     model_lr = 1e-4
     model_betas = (0.9, 0.999)
+    model_eps = 1e-8
+    model_weight_decay = 0.0
 
     # MultiStepLR scheduler parameter
     lr_scheduler_milestones = [30]
     lr_scheduler_gamma = 0.1
 
-    print_frequency = 100
+    # How many iterations to print the training result
+    train_print_frequency = 100
+    valid_print_frequency = 1
 
-if mode == "valid":
+if mode == "test":
     # Test data address
-    lr_dir = f"data/Set5/LRbicx{upscale_factor}"
-    sr_dir = f"results/test/{exp_name}"
-    hr_dir = f"data/Set5/GTmod12"
+    lr_dir = f"./data/Set5/LRbicx{upscale_factor}"
+    sr_dir = f"./results/test/{exp_name}"
+    gt_dir = f"./data/Set5/GTmod12"
 
-    model_path = f"results/{exp_name}/best.pth.tar"
+    model_weights_path = "./results/pretrained_models/SRDenseNet_x4-ImageNet-604e625.pth.tar"
