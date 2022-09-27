@@ -71,7 +71,7 @@ def main() -> None:
 
         print(f"Processing `{os.path.abspath(lr_image_path)}`...")
         lr_y_tensor, bic_cb_image, bic_cr_image = preprocess_one_image(lr_image_path, config.upscale_factor, config.device)
-        gt_y_tensor, bic_cb_image, bic_cr_image = preprocess_one_image(gt_image_path, config.upscale_factor, config.device)
+        gt_y_tensor, _, _ = preprocess_one_image(gt_image_path, config.upscale_factor, config.device)
 
         # Only reconstruct the Y channel image data.
         with torch.no_grad():

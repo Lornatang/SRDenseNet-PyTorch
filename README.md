@@ -9,7 +9,6 @@ This repository contains an op-for-op PyTorch reimplementation of [Image Super-R
 - [SRDenseNet-PyTorch](#srdensenet-pytorch)
     - [Overview](#overview)
     - [Table of contents](#table-of-contents)
-    - [About Image Super-Resolution Using Dense Skip Connections](#about-image-super-resolution-using-dense-skip-connections)
     - [Download weights](#download-weights)
     - [Download datasets](#download-datasets)
     - [Test](#test)
@@ -17,19 +16,6 @@ This repository contains an op-for-op PyTorch reimplementation of [Image Super-R
     - [Result](#result)
     - [Credit](#credit)
         - [Image Super-Resolution Using Dense Skip Connections](#image-super-resolution-using-dense-skip-connections)
-
-## About Image Super-Resolution Using Dense Skip Connections
-
-If you're new to SRDenseNet, here's an abstract straight from the paper:
-
-Recent studies have shown that the performance of single-image super-resolution methods can be significantly boosted by using deep convolutional
-neural networks. In this study, we present a novel single-image super-resolution method by introducing dense skip connections in a very deep network.
-In the proposed network, the feature maps of each layer are propagated into all subsequent layers, providing an effective way to combine the low-level
-features and high-level features to boost the reconstruction performance. In addition, the dense skip connections in the network enable short paths to
-be built directly from the output to each layer, alleviating the vanishing-gradient problem of very deep networks. Moreover, deconvolution layers are
-integrated into the network to learn the upsampling filters and to speedup the reconstruction process. Further, the proposed method substantially
-reduces the number of parameters, enhancing the computational efficiency. We evaluate the proposed method using images from four benchmark datasets
-and set a new state of the art.
 
 ## Download weights
 
@@ -43,25 +29,52 @@ Contains DIV2K, DIV8K, Flickr2K, OST, T91, Set5, Set14, BSDS100 and BSDS200, etc
 - [Google Driver](https://drive.google.com/drive/folders/1A6lzGeQrFMxPqJehK9s37ce-tPDj20mD?usp=sharing)
 - [Baidu Driver](https://pan.baidu.com/s/1o-8Ty_7q6DiS3ykLU09IVg?pwd=llot)
 
+Please refer to `README.md` in the `data` directory for the method of making a dataset.
+
+## How Test and Train
+
+Both training and testing only need to modify the `config.py` file. 
+
 ## Test
 
-Modify the contents of the file as follows.
+Modify the `config.py` file.
 
-- line 29: `upscale_factor` change to the magnification you need to enlarge.
-- line 31: `mode` change Set to valid mode.
-- line 69: `model_path` change weight address after training.
+- line 29: `arch_name` change to `srdensenet_x4`.
+- line 33: `upscale_factor` change to `4`.
+- line 35: `mode` change to `test`.
+- line 37: `exp_name` change to `test_SRDenseNet_x4`.
+- line 82: `model_weights_path` change to `./results/pretrained_models/SRDenseNet_x4-ImageNet-bb28c23d.pth.tar`.
 
-## Train
+```bash
+python3 test.py
+```
 
-Modify the contents of the file as follows.
+## Train SRDenseNet model
 
-- line 29: `upscale_factor` change to the magnification you need to enlarge.
-- line 31: `mode` change Set to train mode.
+Modify the `config.py` file.
 
-If you want to load weights that you've trained before, modify the contents of the file as follows.
+- line 29: `arch_name` change to `srdensenet_x4`.
+- line 33: `upscale_factor` change to `4`.
+- line 35: `mode` change to `train`.
+- line 37: `exp_name` change to `SRDenseNet_x4`.
 
-- line 47: `start_epoch` change number of training iterations in the previous round.
-- line 48: `resume` the weight address that needs to be loaded.
+```bash
+python3 train.py
+```
+
+## Resume train SRDenseNet model
+
+Modify the `config.py` file.
+
+- line 29: `arch_name` change to `srdensenet_x4`.
+- line 33: `upscale_factor` change to `4`.
+- line 35: `mode` change to `train`.
+- line 37: `exp_name` change to `SRDenseNet_x4`.
+- line 54: `resume_model_weights_path` change to `./samples/SRDenseNet_x4/epoch_xxx.pth.tar`.
+
+```bash
+python3 train.py
+```
 
 ## Result
 
@@ -71,11 +84,28 @@ In the following table, the value in `()` indicates the result of the project, a
 
 | Dataset | Scale |       PSNR       | 
 |:-------:|:-----:|:----------------:|
-|  Set5   |   4   | 32.02(**31.50**) |
-|  Set14  |   4   | 28.50(**28.00**) |
+|  Set5   |   4   | 32.02(**31.71**) |
+|  Set14  |   4   | 28.50(**28.34**) |
 
-Low Resolution / Super Resolution / High Resolution
-<span align="center"><img src="assets/result.png"/></span>
+```bash
+# Download `SRGAN_x4-ImageNet-c71a4860.pth.tar` weights to `./results/pretrained_models`
+# More detail see `README.md<Download weights>`
+python3 ./inference.py
+```
+
+Input: 
+
+<span align="center"><img width="240" height="360" src="figure/comic_lr.png"/></span>
+
+Output: 
+
+<span align="center"><img width="240" height="360" src="figure/comic_sr.png"/></span>
+
+```text
+Build `srdensenet_x4` model successfully.
+Load `srdensenet_x4` model weights `./results/pretrained_models/SRDenseNet_x4-ImageNet-bb28c23d.pth.tar` successfully.
+SR image save to `./figure/comic_sr.png`
+```
 
 ### Credit
 

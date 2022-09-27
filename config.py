@@ -79,4 +79,4 @@ if mode == "test":
     sr_dir = f"./results/test/{exp_name}"
     gt_dir = f"./data/Set5/GTmod12"
 
-    model_weights_path = "./results/pretrained_models/SRDenseNet_x4-ImageNet-604e625.pth.tar"
+    model_weights_path = "./results/pretrained_models/SRDenseNet_x4-ImageNet-bb28c23d.pth.tar"

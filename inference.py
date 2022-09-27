@@ -15,11 +15,12 @@ import argparse
 import os
 
 import cv2
+import numpy as np
 import torch
 from torch import nn
-import numpy as np
-from imgproc import preprocess_one_image, tensor_to_image, ycbcr_to_bgr
+
 import model
+from imgproc import preprocess_one_image, tensor_to_image, ycbcr_to_bgr
 from utils import load_state_dict
 
 model_names = sorted(
@@ -90,7 +91,7 @@ if __name__ == "__main__":
                         help="Super-resolution image path.")
     parser.add_argument("--model_weights_path",
                         type=str,
-                        default="./results/pretrained_models/SRDenseNet_x4-ImageNet-604e625.pth.tar",
+                        default="./results/pretrained_models/SRDenseNet_x4-ImageNet-bb28c23d.pth.tar",
                         help="Model weights file path.")
     parser.add_argument("--device_type",
                         type=str,

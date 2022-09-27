@@ -120,8 +120,8 @@ def main():
                         f"epoch_{epoch + 1}.pth.tar",
                         samples_dir,
                         results_dir,
-                        "g_best.pth.tar",
-                        "g_last.pth.tar",
+                        "best.pth.tar",
+                        "last.pth.tar",
                         is_best,
                         is_last)
 
